@@ -62,12 +62,12 @@ int main(int argc, char *argv[])
 
 
     //p.waitForFinished();
-    //qInstallMessageHandler(myMessageHandler);
+    qInstallMessageHandler(myMessageHandler);
 
     SocketServer server;
     SocketServerAlive serverAlive;
     NfcThread nfcTh;
-    //nfcTh.start();
+    nfcTh.start();
 
 
     MainWindow w;
