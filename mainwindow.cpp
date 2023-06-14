@@ -201,10 +201,30 @@ void MainWindow::StartThGetId(){
         ui->version->setText("<font color='red'><strong>Offline</strong></font>");
         ui->version->show();
 
-        if(QNetworkInterface::interfaceFromName("wlan0").addressEntries().length()){
+        QString ifname = "wlan0";
 
-            ui->ip->setText("<font color='red'><strong>"+QNetworkInterface::interfaceFromName("wlan0").addressEntries().first().ip().toString()+"</strong></font>");
-            ui->ip->show();
+        if(QString(getenv("USER"))=="alberto"){
+
+            ifname = "wlp0s20f3";
+
+        }
+
+
+        if(QNetworkInterface::interfaceFromName(ifname).addressEntries().length()){
+
+            QString ip = QNetworkInterface::interfaceFromName(ifname).addressEntries().first().ip().toString();
+
+            if(ip.split(".").count()==4){
+
+                ui->ip->setText("<font color='red'><strong>"+QNetworkInterface::interfaceFromName(ifname).addressEntries().first().ip().toString()+"</strong></font>");
+                ui->ip->show();
+
+            }else{
+
+                ui->ip->setText("<font color='red'><strong>IP UNKNOWN</strong></font>");
+                ui->ip->show();
+
+            }
 
         }else{
 
@@ -216,7 +236,7 @@ void MainWindow::StartThGetId(){
 
         QJsonObject jo;
         jo.insert("cmd","getid");
-        jo.insert("mac",QNetworkInterface::interfaceFromName("wlan0").hardwareAddress());
+        jo.insert("mac",QNetworkInterface::interfaceFromName(ifname).hardwareAddress());
 
         SocketClient sc;
         QByteArray res = sc.Connect(QString(QJsonDocument(jo).toJson()));
