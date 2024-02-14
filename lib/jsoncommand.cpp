@@ -58,7 +58,7 @@ void JsonCommand::ElaborateCommand(QTcpSocket *socket){
     QString cmd = jObj["cmd"].toString();
 
     if(cmd!="alive")
-        qDebug() << "Leggo da socket: " << QString(buffer).mid(0,200);
+        qDebug() << "Leggo da socket: " << QString(buffer);
 
     //qDebug() << "Leggo Json: " << cmd;
 
