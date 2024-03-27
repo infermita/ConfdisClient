@@ -96,16 +96,16 @@ void MainWindow::SetImage(QString id,bool check){
 
     }else if(id=="idMonitor"){
         if(idMonitor==0) {
-            ui->label->setText("ID: UNDEFINED");
+            ui->label->setText("<font color='white'>ID: UNDEFINED</font>");
         }else{
-            ui->label->setText("ID: "+QString::number(idMonitor));
+            ui->label->setText("<font color='white'>ID: "+QString::number(idMonitor)+"</font>");
         }
-        ui->version->setText("<font color='black'>ConfDis Ver. 1.1</font>");
+        ui->version->setText("<font color='white'>ConfDis Ver. 1.1</font>");
         ui->version->show();
     }else if(id=="config"){
-        ui->label->setText("CONFIG MODE");
+        ui->label->setText("<font color='white'>CONFIG MODE</font>");
     }else if(id=="error"){
-        ui->label->setText("SERVER ERROR");
+        ui->label->setText("<font color='white'>SERVER ERROR</font>");
     }else{
         Dao *d = new Dao();
 
