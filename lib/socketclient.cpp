@@ -2,6 +2,7 @@
 #include <QSettings>
 #include "mainwindow.h"
 #include <QDebug>
+#include <QNetworkInterface>
 
 
 SocketClient::SocketClient()
@@ -65,11 +66,35 @@ QByteArray SocketClient::Connect(QString cmd){
     }
     else
     {
+        /*
+        QString ifname = "wlan0";
+        QString ip = "";
+
+        if(QString(getenv("USER"))=="alberto"){
+
+            ifname = "wlp0s20f3";
+
+        }
+
+        if(QNetworkInterface::interfaceFromName(ifname).addressEntries().length()){
+
+            ip = QNetworkInterface::interfaceFromName(ifname).addressEntries().first().ip().toString();
+
+            if(ip.split(".").count()==4){
+
+            }else{
+                ip = "";
+            }
+        }
+        QString mac = QNetworkInterface::interfaceFromName(ifname).hardwareAddress();
+
         qDebug() << "Not connected!";
         QUdpSocket *udpSocket = new QUdpSocket(this);
-        QByteArray datagram = "{\"cmd\": \"ipserverrequest\"}";
+        QByteArray datagram = "{\"cmd\": \"ipserverrequest\",\"ip\": \""+ip.toUtf8()+"\",\"mac\": \""+mac.toUtf8()+"\"}";
+
         udpSocket->writeDatagram(datagram, QHostAddress::Broadcast, 4099);
         udpSocket->close();
+        */
     }
 
     return ret;
