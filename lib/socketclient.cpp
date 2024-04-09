@@ -26,14 +26,14 @@ QByteArray SocketClient::Connect(QString cmd){
 
     QByteArray ret = "error";
 
-    if(socket->waitForConnected(3000))
+    if(socket->waitForConnected(6000))
     {
         qDebug() << "Connected!";
         ret.clear();
 
         // send
         socket->write(cmd.toUtf8());
-        socket->waitForBytesWritten(1000);
+        socket->waitForBytesWritten(3000);
         //socket->waitForReadyRead(10000);
 
         while(1){
