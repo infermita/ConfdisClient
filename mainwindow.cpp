@@ -235,7 +235,6 @@ void MainWindow::StartThGetId(){
             ui->ip->show();
 
         }
-        qDebug() << "Status connection" << res.mid(0,20);
 
         if(conn){
 
