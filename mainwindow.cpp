@@ -235,6 +235,7 @@ void MainWindow::StartThGetId(){
             ui->ip->show();
 
         }
+        qDebug() << "Status connection" << res.mid(0,20);
 
         if(conn){
 
@@ -283,11 +284,11 @@ void MainWindow::StartThGetId(){
                 //}
 
             }
+
+        }else{
+            QTimer::singleShot(100,this,SLOT(StartThGetId()));
+            qDebug() << "Intercaccia non attiva riprovo";
         }
-    //}else{
-    //    QTimer::singleShot(100,this,SLOT(StartThGetId()));
-    //    qDebug() << "Intercaccia non attiva riprovo";
-    //}
 
 }
 void MainWindow::StartThCheckImage(QString id,QString cardKey,QString img){
