@@ -285,7 +285,7 @@ void MainWindow::StartThGetId(){
             }
 
         }else{
-            QTimer::singleShot(100,this,SLOT(StartThGetId()));
+            QTimer::singleShot(1000,this,SLOT(StartThGetId()));
             qDebug() << "Intercaccia non attiva riprovo";
         }
 
