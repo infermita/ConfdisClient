@@ -18,8 +18,9 @@ QByteArray SocketClient::Connect(QString cmd){
     settings.beginGroup("application");
     QString ip = settings.value("ipServer","192.168.2.5").toString();
     int port = settings.value("ipServerPort","4096").toInt();
+    QString brc = settings.value("broadcast","yes").toString();
 
-    qDebug() << "Connect IP server: " << ip << " at port: " << QString::number(port);
+    qDebug() << "Connect IP server: " << ip << " at port: " << QString::number(port) << "Bradcast config enable: " << brc;
 
     socket = new QTcpSocket(this);
     socket->connectToHost(ip, port);
@@ -66,35 +67,38 @@ QByteArray SocketClient::Connect(QString cmd){
     }
     else
     {
-        /*
-        QString ifname = "wlan0";
-        QString ip = "";
 
-        if(QString(getenv("USER"))=="alberto"){
+        if(brc=="yes"){
 
-            ifname = "wlp0s20f3";
+            QString ifname = "wlan0";
+            QString ip = "";
 
-        }
+            if(QString(getenv("USER"))=="alberto"){
 
-        if(QNetworkInterface::interfaceFromName(ifname).addressEntries().length()){
+                ifname = "wlp0s20f3";
 
-            ip = QNetworkInterface::interfaceFromName(ifname).addressEntries().first().ip().toString();
-
-            if(ip.split(".").count()==4){
-
-            }else{
-                ip = "";
             }
+
+            if(QNetworkInterface::interfaceFromName(ifname).addressEntries().length()){
+
+                ip = QNetworkInterface::interfaceFromName(ifname).addressEntries().first().ip().toString();
+
+                if(ip.split(".").count()==4){
+
+                }else{
+                    ip = "";
+                }
+            }
+            QString mac = QNetworkInterface::interfaceFromName(ifname).hardwareAddress();
+
+            qDebug() << "Not connected!";
+            QUdpSocket *udpSocket = new QUdpSocket(this);
+            QByteArray datagram = "{\"cmd\": \"ipserverrequest\",\"ip\": \""+ip.toUtf8()+"\",\"mac\": \""+mac.toUtf8()+"\"}";
+
+            udpSocket->writeDatagram(datagram, QHostAddress::Broadcast, 4099);
+            udpSocket->close();
         }
-        QString mac = QNetworkInterface::interfaceFromName(ifname).hardwareAddress();
 
-        qDebug() << "Not connected!";
-        QUdpSocket *udpSocket = new QUdpSocket(this);
-        QByteArray datagram = "{\"cmd\": \"ipserverrequest\",\"ip\": \""+ip.toUtf8()+"\",\"mac\": \""+mac.toUtf8()+"\"}";
-
-        udpSocket->writeDatagram(datagram, QHostAddress::Broadcast, 4099);
-        udpSocket->close();
-        */
     }
 
     return ret;
