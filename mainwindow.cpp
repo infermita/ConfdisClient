@@ -210,6 +210,8 @@ void MainWindow::StartThGetId(){
         }
 
 
+        bool conn = false;
+
         if(QNetworkInterface::interfaceFromName(ifname).addressEntries().length()){
 
             QString ip = QNetworkInterface::interfaceFromName(ifname).addressEntries().first().ip().toString();
@@ -218,6 +220,7 @@ void MainWindow::StartThGetId(){
 
                 ui->ip->setText("<font color='red'><strong>"+QNetworkInterface::interfaceFromName(ifname).addressEntries().first().ip().toString()+"</strong></font>");
                 ui->ip->show();
+                conn = true;
 
             }else{
 
@@ -233,17 +236,45 @@ void MainWindow::StartThGetId(){
 
         }
 
+        if(conn){
 
-        QJsonObject jo;
-        jo.insert("cmd","getid");
-        jo.insert("mac",QNetworkInterface::interfaceFromName(ifname).hardwareAddress());
+            QJsonObject jo;
+            jo.insert("cmd","getid");
+            jo.insert("mac",QNetworkInterface::interfaceFromName(ifname).hardwareAddress());
 
-        SocketClient sc;
-        QByteArray res = sc.Connect(QString(QJsonDocument(jo).toJson()));
-        qDebug() << "Get id return" << res.mid(0,20);
-        if(res!="error"){
+            SocketClient sc;
+            QByteArray res = sc.Connect(QString(QJsonDocument(jo).toJson()));
+            qDebug() << "Get id return" << res.mid(0,20);
+            if(res!="error"){
 
-            if(QJsonDocument::fromJson(res).object().value("id_station").toString()==""){
+                if(QJsonDocument::fromJson(res).object().value("id_station").toString()==""){
+
+                    //if(numCheckserver<4){
+
+                        QTimer::singleShot(10000,this,SLOT(StartThGetId()));
+                        //numCheckserver++;
+                    //}
+
+                }else{
+
+                    ui->version->hide();
+
+                    idMonitor = QJsonDocument::fromJson(res).object().value("id_station").toString().toInt();
+
+                    QPixmap imgSave;
+                    QByteArray imgArr;
+                    imgArr.append(QJsonDocument::fromJson(res).object().value("image").toString());
+                    imgSave.loadFromData(QByteArray::fromBase64(imgArr));
+                    imgSave.save(path+"/defaultimg.jpg");
+
+                    SetImage("default",false);
+
+                    QTimer::singleShot(5000,this,SLOT(HideIp()));
+                }
+
+                qDebug() << "GETID: " << QJsonDocument::fromJson(res).object().value("id_station").toString();
+
+            }else{
 
                 //if(numCheckserver<4){
 
@@ -251,33 +282,7 @@ void MainWindow::StartThGetId(){
                     //numCheckserver++;
                 //}
 
-            }else{
-
-                ui->version->hide();
-
-                idMonitor = QJsonDocument::fromJson(res).object().value("id_station").toString().toInt();
-
-                QPixmap imgSave;
-                QByteArray imgArr;
-                imgArr.append(QJsonDocument::fromJson(res).object().value("image").toString());
-                imgSave.loadFromData(QByteArray::fromBase64(imgArr));
-                imgSave.save(path+"/defaultimg.jpg");
-
-                SetImage("default",false);
-
-                QTimer::singleShot(5000,this,SLOT(HideIp()));
             }
-
-            qDebug() << "GETID: " << QJsonDocument::fromJson(res).object().value("id_station").toString();
-
-        }else{
-
-            //if(numCheckserver<4){
-
-                QTimer::singleShot(10000,this,SLOT(StartThGetId()));
-                //numCheckserver++;
-            //}
-
         }
     //}else{
     //    QTimer::singleShot(100,this,SLOT(StartThGetId()));
