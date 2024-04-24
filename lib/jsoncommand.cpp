@@ -280,8 +280,8 @@ void JsonCommand::ChangeIp(QString ip){
     settings.endGroup();
     settings.sync();
     qDebug() << "Cambio IP Server: " << ip << " Riavvio SW";
-    QProcess p;
-    p.startDetached("/etc/init.d/confdis restart");
+    //QProcess p;
+    //p.startDetached("/etc/init.d/confdis restart");
 
 }
 

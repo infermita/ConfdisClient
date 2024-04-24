@@ -105,7 +105,8 @@ void MainWindow::SetImage(QString id,bool check){
     }else if(id=="config"){
         ui->label->setText("<font color='white'>CONFIG MODE</font>");
     }else if(id=="error"){
-        ui->label->setText("<font color='white'>SERVER ERROR</font>");
+        ui->version->setText("<font color='white'>SERVER ERROR</font>");
+        ui->version->show();
     }else{
         Dao *d = new Dao();
 
