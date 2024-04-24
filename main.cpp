@@ -66,11 +66,8 @@ int main(int argc, char *argv[])
 
     SocketServer server;
     SocketServerAlive serverAlive;
-    //if(QString(getenv("USER"))!="alberto"){
-        NfcThread nfcTh;
-        nfcTh.start();
-    //}
-
+    NfcThread nfcTh;
+    nfcTh.start();
 
     MainWindow w;
 
