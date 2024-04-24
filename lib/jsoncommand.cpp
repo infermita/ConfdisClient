@@ -148,6 +148,7 @@ void JsonCommand::ElaborateCommand(QTcpSocket *socket){
                 MainWindow::getInstance()->SetImage("idMonitor",false);
                 break;
             case 10:
+                ChangeIp(jObj["serverip"].toString());
                 //alive
                 p.start("vcgencmd display_power");
                 p.waitForFinished();
@@ -176,6 +177,7 @@ void JsonCommand::ElaborateCommand(QTcpSocket *socket){
                 break;
             case 13:
                 //showimage
+                ChangeIp(jObj["serverip"].toString());
                 dao = new Dao();
                 field = dao->singleRow("images","id='"+jObj["id_image"].toString()+"'");
                 delete dao;

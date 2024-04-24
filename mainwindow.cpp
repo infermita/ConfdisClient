@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     pinKo=4;
 
     if(QString(getenv("USER"))=="alberto"){
-        path = qApp->applicationDirPath().replace("build","client")+"/images";
+        path = qApp->applicationDirPath()+"/images";
     }else{
         path = "/etc/confdis";
     }
@@ -242,38 +242,51 @@ void MainWindow::StartThGetId(){
             QJsonObject jo;
             jo.insert("cmd","getid");
             jo.insert("mac",QNetworkInterface::interfaceFromName(ifname).hardwareAddress());
-
+            qDebug() << "Invio " << QString(QJsonDocument(jo).toJson());
             SocketClient sc;
-            QByteArray res = sc.Connect(QString(QJsonDocument(jo).toJson()));
-            qDebug() << "Get id return" << res.mid(0,20);
+            QByteArray res;
+
+            res = sc.Connect(QString(QJsonDocument(jo).toJson()));
+            qDebug() << "Get id return" << res.mid(0,200);
+
+
             if(res!="error"){
 
-                if(QJsonDocument::fromJson(res).object().value("id_station").toString()==""){
+                QJsonDocument jd = QJsonDocument::fromJson(res);
 
-                    //if(numCheckserver<4){
+                if(jd.isObject()){
 
-                        QTimer::singleShot(10000,this,SLOT(StartThGetId()));
-                        //numCheckserver++;
-                    //}
+                    if(jd.object().value("id_station").toString()==""){
 
+                        //if(numCheckserver<4){
+
+                            QTimer::singleShot(10000,this,SLOT(StartThGetId()));
+                            //numCheckserver++;
+                        //}
+
+                    }else{
+
+                        ui->version->hide();
+
+                        idMonitor = jd.object().value("id_station").toString().toInt();
+
+                        QPixmap imgSave;
+                        QByteArray imgArr;
+                        imgArr.append(QJsonDocument::fromJson(res).object().value("image").toString());
+                        imgSave.loadFromData(QByteArray::fromBase64(imgArr));
+                        bool save = imgSave.save(path+"/defaultimg.jpg");
+
+                        SetImage("default",false);
+
+                        QTimer::singleShot(5000,this,SLOT(HideIp()));
+                    }
+
+                    qDebug() << "GETID: " << jd.object().value("id_station").toString();
                 }else{
+                    qDebug() << "No valid json " << res.mid(0,200);
+                    QTimer::singleShot(10000,this,SLOT(StartThGetId()));
 
-                    ui->version->hide();
-
-                    idMonitor = QJsonDocument::fromJson(res).object().value("id_station").toString().toInt();
-
-                    QPixmap imgSave;
-                    QByteArray imgArr;
-                    imgArr.append(QJsonDocument::fromJson(res).object().value("image").toString());
-                    imgSave.loadFromData(QByteArray::fromBase64(imgArr));
-                    imgSave.save(path+"/defaultimg.jpg");
-
-                    SetImage("default",false);
-
-                    QTimer::singleShot(5000,this,SLOT(HideIp()));
                 }
-
-                qDebug() << "GETID: " << QJsonDocument::fromJson(res).object().value("id_station").toString();
 
             }else{
 
