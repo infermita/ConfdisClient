@@ -275,11 +275,17 @@ void JsonCommand::ChangeIp(QString ip){
 
     QSettings settings(MainWindow::getInstance()->path+"/confdis.ini", QSettings::IniFormat);
     settings.beginGroup("application");
-    settings.setValue("ipServer",ip);
-    settings.setValue("ipServerPort",4096);
-    settings.endGroup();
-    settings.sync();
-    qDebug() << "Cambio IP Server: " << ip << " Riavvio SW";
+
+    QString oldIp = settings.value("ipServer","192.168.2.5").toString();
+
+    if( oldIp!=ip){
+
+        settings.setValue("ipServer",ip);
+        settings.setValue("ipServerPort",4096);
+        settings.endGroup();
+        settings.sync();
+        qDebug() << "Cambio IP Server: " << ip << "Vecchio ip " << oldIp;
+    }
     //QProcess p;
     //p.startDetached("/etc/init.d/confdis restart");
 

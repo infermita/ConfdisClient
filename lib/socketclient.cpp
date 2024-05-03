@@ -20,7 +20,7 @@ QByteArray SocketClient::Connect(QString cmd){
     int port = settings.value("ipServerPort","4096").toInt();
     QString brc = settings.value("broadcast","yes").toString();
 
-    qDebug() << "Connect IP server: " << ip << " at port: " << QString::number(port) << "Bradcast config enable: " << brc;
+    qDebug() << "Connect IP server: " << ip << " at port: " << QString::number(port) << "Broadcast config enable: " << brc;
 
     socket = new QTcpSocket(this);
     socket->connectToHost(ip, port);
