@@ -392,58 +392,69 @@ void MainWindow::Ntpdate() {
 void MainWindow::SendImage(QString idImage,QString cardKey){
 
     SocketClient sc;
+    int tent = 3;
 
-    QJsonObject jo;
-    jo.insert("cmd","sendimage");
-    if(cardKey==""){
-        jo.insert("id_image",idImage);
-    }else{
-        jo.insert("cardkey",cardKey);
-    }
-    jo.insert("id_station",MainWindow::getInstance()->idMonitor);
+    retrai:
 
-    qDebug() << "Invio" << QString(QJsonDocument(jo).toJson());
-
-    QByteArray res = sc.Connect(QString(QJsonDocument(jo).toJson()));
-    if(res!="error"){
-
-        QJsonParseError *error = new QJsonParseError();
-        QJsonDocument d = QJsonDocument::fromJson(res,error);
-        QJsonObject jObj = d.object();
-
-        if(error->error==QJsonParseError::NoError){
-
-            qDebug() << "Ricevo da sendimage id image:" << jObj["id_image"].toString() << " Card key" << jObj["cardkey"].toString();
-
-            if(jObj["id_image"].toString().length()){
-
-                QHash<QString,QString> field;
-                field.insert("id",jObj["id_image"].toString());
-                field.insert("image",jObj["image"].toString());
-                field.insert("cardkey",jObj["cardkey"].toString());
-                Dao *dao = new Dao();
-                dao->replaceRow("images",field);
-                delete dao;
-            }
-
-            if(cardKey==""){
-                SetImage(idImage,false);
-            }else{
-                SetImage(cardKey,false);
-            }
+        QJsonObject jo;
+        jo.insert("cmd","sendimage");
+        if(cardKey==""){
+            jo.insert("id_image",idImage);
         }else{
-            qDebug() << "Riprovo perchè ho ricevuto pacchetto json non corretto";
-            if(cardKey==""){
-                SendImage(idImage,"");
-            }else{
-                SendImage("",cardKey);
-            }
+            jo.insert("cardkey",cardKey);
         }
+        jo.insert("id_station",MainWindow::getInstance()->idMonitor);
+
+        qDebug() << "Invio" << QString(QJsonDocument(jo).toJson());
+
+        QByteArray res = sc.Connect(QString(QJsonDocument(jo).toJson()));
+        if(res!="error"){
+
+            QJsonParseError *error = new QJsonParseError();
+            QJsonDocument d = QJsonDocument::fromJson(res,error);
+            QJsonObject jObj = d.object();
+
+            if(error->error==QJsonParseError::NoError){
+
+                qDebug() << "Ricevo da sendimage id image:" << jObj["id_image"].toString() << " Card key" << jObj["cardkey"].toString();
+
+                if(jObj["id_image"].toString().length()){
+
+                    QHash<QString,QString> field;
+                    field.insert("id",jObj["id_image"].toString());
+                    field.insert("image",jObj["image"].toString());
+                    field.insert("cardkey",jObj["cardkey"].toString());
+                    Dao *dao = new Dao();
+                    dao->replaceRow("images",field);
+                    delete dao;
+                }
+
+                if(cardKey==""){
+                    SetImage(idImage,false);
+                }else{
+                    SetImage(cardKey,false);
+                }
+            }else{
+                qDebug() << "Riprovo sendimage perchè ho ricevuto pacchetto json non corretto";
+                if(cardKey==""){
+                    SendImage(idImage,"");
+                }else{
+                    SendImage("",cardKey);
+                }
+            }
 
 
 
     }else{
-        SetImage("error",false);
+        if(tent>0){
+            tent--;
+            sleep(10);
+            qDebug() << "Riprovo sendimage perchè non ho ricevuto risposta dal server";
+            goto retrai;
+        }else{
+            qDebug() << "Metto server error";
+            SetImage("error",false);
+        }
     }
 
 }
