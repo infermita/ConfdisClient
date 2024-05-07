@@ -150,10 +150,17 @@ void JsonCommand::ElaborateCommand(QTcpSocket *socket){
             case 10:
                 ChangeIp(jObj["serverip"].toString());
                 //alive
-                p.start("vcgencmd display_power");
-                p.waitForFinished();
-                read = p.readAllStandardOutput().trimmed();
-                read = ",\""+read.replace("=","\":\"")+"\"";
+                //p.start("vcgencmd display_power");
+                //p.waitForFinished();
+                //read = p.readAllStandardOutput().trimmed();
+                //read = ",\""+read.replace("=","\":\"")+"\"";
+                if(MainWindow::getInstance()->isHidden()){
+                    read = ",\"display_power\":\"0\"";
+                }else{
+                    read = ",\"display_power\":\"1\"";
+                }
+
+
                 p.start("vcgencmd get_lcd_info");
                 p.waitForFinished();
                 if(p.readAllStandardOutput().trimmed()=="1680 1050 24"){
