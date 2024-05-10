@@ -8,7 +8,7 @@ NfcThread::NfcThread()
 }
 void NfcThread::run(){
 
-    int i;
+    int i,sl = 1;
     QString id;
     const nfc_modulation nmMifare = {
         .nmt = NMT_ISO14443A,
@@ -22,16 +22,20 @@ void NfcThread::run(){
         nfc_init(&context);
         if (context == NULL) {
             qDebug() << "Unable to init libnfc (malloc)";
+            sl = 60;
 
         }else{
 
-            qDebug() << "Context inizializzato";
+            //qDebug() << "Context inizializzato";
 
             pnd = nfc_open(context, NULL);
             if (pnd == NULL) {
                 qDebug() << "ERROR: %s. Unable to open NFC device.";
+                sl = 60;
 
             }else{
+
+                sl = 1;
 
                 qDebug() << "Nfc aperto";
 
@@ -80,7 +84,10 @@ void NfcThread::run(){
 
             }
         }
-        sleep(1);
+
+        nfc_exit(context);
+
+        sleep(sl);
 
     }
 
