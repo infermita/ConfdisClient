@@ -74,18 +74,21 @@ void JsonCommand::ElaborateCommand(QTcpSocket *socket){
                 SendResponse(socket,"ok "+cmd);
                 p.start("halt");
                 p.waitForFinished();
+                p.close();
                 break;
             case 1:
                 //System reboot
                 SendResponse(socket,"ok "+cmd);
                 p.start("reboot");
                 p.waitForFinished();
+                p.close();
                 break;
             case 2:
                 //System hdmi off
                 SendResponse(socket,"ok "+cmd);
                 p.start("vcgencmd display_power 0");
                 p.waitForFinished();
+                p.close();
                 MainWindow::getInstance()->hide();
                 break;
             case 3:
@@ -93,6 +96,7 @@ void JsonCommand::ElaborateCommand(QTcpSocket *socket){
                 SendResponse(socket,"ok "+cmd);
                 p.start("vcgencmd display_power 1");
                 p.waitForFinished();
+                p.close();
                 MainWindow::getInstance()->show();
                 break;
             case 4:
@@ -129,6 +133,7 @@ void JsonCommand::ElaborateCommand(QTcpSocket *socket){
                 SendResponse(socket,"ok "+cmd);
                 //MainWindow::getInstance()->Exit();
                 p.startDetached("/etc/init.d/confdis restart");
+                p.close();
                 break;
             case 7:
                 //led ok
@@ -169,6 +174,7 @@ void JsonCommand::ElaborateCommand(QTcpSocket *socket){
                     read += ",\"lcd_info\":\"0\"";
                 }
                 read += ",\"nfc_status\":\""+MainWindow::getInstance()->nfc_status+"\"";
+                p.close();
                 SendResponse(socket,"ok "+cmd,read);
                 break;
             case 11:
