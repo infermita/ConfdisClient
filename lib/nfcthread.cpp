@@ -74,7 +74,7 @@ void NfcThread::run(){
                             sleep(1);
                         }
                         nfc_close(pnd);
-                        nfc_exit(context);
+                        //nfc_exit(context);
                         //QTimer::singleShot(100,this,SLOT(NfcPresent()));
 
 
@@ -85,7 +85,7 @@ void NfcThread::run(){
             }
         }
 
-        nfc_exit(context);
+        //nfc_exit(context);
 
         sleep(sl);
 
