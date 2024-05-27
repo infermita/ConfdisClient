@@ -100,7 +100,7 @@ void MainWindow::SetImage(QString id,bool check){
         }else{
             ui->label->setText("<font color='white'>ID: "+QString::number(idMonitor)+"</font>");
         }
-        ui->version->setText("<font color='white'>ConfDis Ver. 1.8</font>");
+        ui->version->setText("<font color='white'>ConfDis Ver. 1.9</font>");
         ui->version->show();
     }else if(id=="config"){
         ui->label->setText("<font color='white'>CONFIG MODE</font>");
